@@ -39,9 +39,10 @@ const GetCards = () => {
         fetchDishes(); // Call the async function
     }, [currentPage, filters]);
 
-    const handlePress = (dish) => {
-      console.log("Navigating to dish:", dish.id);
-      router.push(`/item/${dish.id}`);
+    const handlePress = (id) => {
+      event.preventDefault();
+      console.log("Navigating to dish:", id);
+      router.push(`/item/${id}`);
     };
 
     const checkAuth = () => {
@@ -112,7 +113,7 @@ const GetCards = () => {
       <div className="container mx-auto">
         <div className="flex flex-wrap -mx-4">
           {allDish.map((dish: DishProps) => (
-            <div className="w-full sm:w-1/2 md:w-1/2 xl:w-1/4 p-4" onClick={() => handlePress(dish)}>
+            <div className="w-full sm:w-1/2 md:w-1/2 xl:w-1/4 p-4" onClick={() => handlePress(dish.id)}>
               <a href="" className="c-card block bg-white dark:bg-gray-800 shadow-md hover:shadow-xl dark:hover:shadow-gray-500/50 rounded-lg overflow-hidden flex flex-col">
               <div className="relative pb-48 overflow-hidden">
                 <img className="absolute inset-0 h-full w-full object-cover" src={dish.image} alt={dish.name}/>

@@ -33,7 +33,36 @@ body {
  .cartBar.show {
   transform: translateX(0);
  }
+
+ .cls-1 {
+  fill-rule:evenodd;
+}
+
+.dark .cls-1 {
+  fill: #fff; 
+}
+
+.my-svg {
+  width: 256px;
+  height: 256px;
+}
+
+.skeleton-text {
+  background: linear-gradient(90deg, #f3f3f3 25%, #e5e5e5 50%, #f3f3f3 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+ }
  
+ @keyframes loading {
+   0% {
+     background-position: 200% 0;
+  }
+   100% {
+     background-position: -200% 0;
+  }
+ }
+
+
  /* Define the shake animation */
 @keyframes shake {
   0% { transform: translate(1px, 1px) rotate(0deg); }

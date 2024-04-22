@@ -27,6 +27,7 @@ const ProfilePage = () => {
                 throw new Error('Failed to fetch user data');
             }
             const data = await response.json();
+            localStorage.setItem("username", data.fullName);
             const formattedUser = {
                 ...data,
                 birthDate: data.birthDate ? new Date(data.birthDate).toISOString().split('T')[0] : '',
@@ -84,75 +85,6 @@ const ProfilePage = () => {
  };
 
  return (
-    // <div className="profile-page">
-    //   <h2>Edit Profile</h2>
-    //   <form onSubmit={handleSubmit}>
-    //     <div>
-    //       <label htmlFor="fullName">Full Name:</label>
-    //       <input
-    //         type="text"
-    //         id="fullName"
-    //         name="fullName"
-    //         value={user.fullName}
-    //         onChange={handleInputChange}
-    //       />
-    //     </div>
-    //     <div>
-    //       <label htmlFor="email">Email:</label>
-    //       <input
-    //         type="email"
-    //         id="email"
-    //         name="email"
-    //         value={user.email}
-    //         onChange={handleInputChange}
-    //         readOnly
-    //       />
-    //     </div>
-    //     <div>
-    //       <label htmlFor="birthDate">Date of Birth:</label>
-    //       <input
-    //         type="date"
-    //         id="birthDate"
-    //         name="birthDate"
-    //         value={user.birthDate}
-    //         onChange={handleInputChange}
-    //       />
-    //     </div>
-    //     <div>
-    //       <label htmlFor="gender">Gender:</label>
-    //       <input
-    //         type="text"
-    //         id="gender"
-    //         name="gender"
-    //         value={user.gender}
-    //         onChange={handleInputChange}
-    //         readOnly
-    //       />
-    //     </div>
-    //     <div>
-    //       <label htmlFor="address">Address:</label>
-    //       <input
-    //         type="text"
-    //         id="address"
-    //         name="address"
-    //         value={user.address}
-    //         onChange={handleInputChange}
-    //       />
-    //     </div>
-    //     <div>
-    //       <label htmlFor="phoneNumber">Phone Number:</label>
-    //       <input
-    //         type="tel"
-    //         id="phoneNumber"
-    //         name="phoneNumber"
-    //         value={user.phoneNumber}
-    //         onChange={handleInputChange}
-    //       />
-    //     </div>
-    //     <button type="submit">Save Changes</button>
-    //   </form>
-    // </div>
-
   
       <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 lg:p-14 shadow-input bg-white dark:bg-black">
         <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>

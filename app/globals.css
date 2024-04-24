@@ -46,12 +46,6 @@ body {
   width: 256px;
   height: 256px;
 }
-
-.skeleton-text {
-  background: linear-gradient(90deg, #f3f3f3 25%, #e5e5e5 50%, #f3f3f3 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
- }
  
  @keyframes loading {
    0% {

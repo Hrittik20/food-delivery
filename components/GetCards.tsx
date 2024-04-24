@@ -19,6 +19,7 @@ const GetCards = () => {
     const [filters, setFilters] = useState({ category: [], vegetarian: false, sort: '' });
     const cartCount = useSelector(state => state.cart.cartCount);
     const dispatch = useDispatch();
+    const [addedToCart, setAddedToCart] = useState([]);
     
     // const data = await getDish();
     // const allDish = data.dishes
@@ -58,14 +59,20 @@ const GetCards = () => {
       setCurrentPage(page);
     };
 
+    const isInCart = (id) => {
+      return addedToCart.includes(id);
+    };
+
     const handleFilterChange = (newFilters) => {
       setFilters(newFilters);
    };
 
    const handleAddCart = (dishId) => (event) => {
       if(checkAuth()){
+        console.log("YESS")
         event.preventDefault();
         dispatch(updateCartCount(cartCount+1));
+        setAddedToCart([...addedToCart, dishId]);
         // localStorage.setItem("cartItem", cartItemCount.toString());
         addBasket(dishId);
       } else {
@@ -113,12 +120,12 @@ const GetCards = () => {
       <div className="container mx-auto">
         <div className="flex flex-wrap -mx-4">
           {allDish.map((dish: DishProps) => (
-            <div className="w-full sm:w-1/2 md:w-1/2 xl:w-1/4 p-4" onClick={() => handlePress(dish.id)}>
+            <div className="w-full sm:w-1/2 md:w-1/2 xl:w-1/4 p-4">
               <a href="" className="c-card block bg-white dark:bg-gray-800 shadow-md hover:shadow-xl dark:hover:shadow-gray-500/50 rounded-lg overflow-hidden flex flex-col">
               <div className="relative pb-48 overflow-hidden">
-                <img className="absolute inset-0 h-full w-full object-cover" src={dish.image} alt={dish.name}/>
+                <img className="absolute inset-0 h-full w-full object-cover" onClick={() => handlePress(dish.id)} src={dish.image} alt={dish.name}/>
               </div>
-              <div className="p-4 flex-1">
+              <div className="p-4 flex-1" onClick={() => handlePress(dish.id)}>
                 <span className={`inline-block px-2 py-1 leading-none rounded-full font-semibold uppercase tracking-wide text-xs ${dish.vegetarian ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
                 {dish.vegetarian ? 'Veg' : 'Non-Veg'}
                 </span>              
@@ -128,15 +135,29 @@ const GetCards = () => {
                   <span className="text-sm font-semibold">ab</span>&nbsp;<span className="font-bold text-xl">{dish.price}</span>&nbsp;<span className="text-sm font-semibold">₽</span>
                 </div>
               </div>
-              <div className="p-4 border-t border-b text-xs text-gray-700">
+              <div className="p-4 border-t border-b text-xs text-gray-700" onClick={() => handlePress(dish.id)}>
                 <div className="p-4 flex items-start text-sm text-gray-600">
                   <StarRating rating={dish.rating} />
                 </div>       
               </div>
-              <div className="p-4 flex justify-center">
+              <div className="p-4 flex justify-center" onClick={() => event.preventDefault()}>
+              {isInCart(dish.id) ? (
+                <div className="p-4 flex justify-center">
+                  <div className="flex items-center">
+                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l">
+                    -
+                  </button>
+                  <div className="px-4">1</div> {/* Display current quantity */}
+                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r">
+                    +
+                  </button>
+                  </div>
+                </div>
+              ) : (
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleAddCart(dish.id)}>
-                  Add to Cart
+                    Add to Cart
                 </button>
+              )}
               </div>
               </a>
             </div>

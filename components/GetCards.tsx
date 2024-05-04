@@ -8,8 +8,11 @@ import StarRating from './StarRating';
 import FilterBar from './FilterBar';
 import addBasket from '@/utils/add-basket';
 import ErrorMessage from './ErrorMessage';
-import  { updateCartCount }  from '@/actions/actions'
 import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, updateQuantity, removeFromCart } from '@/actions/actions';
+import delBasket from '@/utils/del-basket';
+import getBasket from '@/utils/get-basket';
+
 
 const GetCards = () => {
     const router = useRouter();
@@ -17,9 +20,11 @@ const GetCards = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
     const [filters, setFilters] = useState({ category: [], vegetarian: false, sort: '' });
-    const cartCount = useSelector(state => state.cart.cartCount);
+    const cartItems = useSelector(state => state.cart.cartItems);
     const dispatch = useDispatch();
     const [addedToCart, setAddedToCart] = useState([]);
+    const [basketItems, setBasketItems] = useState([]);
+
     
     // const data = await getDish();
     // const allDish = data.dishes
@@ -40,6 +45,22 @@ const GetCards = () => {
         fetchDishes(); // Call the async function
     }, [currentPage, filters]);
 
+    
+    
+    useEffect(() => {
+      const fetchBasketItems = async () => {
+          try {
+              const items = await getBasket();
+              setBasketItems(items);
+          } catch (error) {
+              console.error("Error fetching basket items:", error);
+          }
+      };
+
+      fetchBasketItems(); // Call the async function
+  }, [basketItems]);
+
+    
     const handlePress = (id) => {
       event.preventDefault();
       console.log("Navigating to dish:", id);
@@ -60,8 +81,14 @@ const GetCards = () => {
     };
 
     const isInCart = (id) => {
-      return addedToCart.includes(id);
+      return basketItems && basketItems.some(item => item.id === id);
     };
+
+    const getItemQuantity = (itemId) => {
+      const item = basketItems && basketItems.find(item => item.id === itemId);
+      return item ? item.amount : 0;
+    };
+
 
     const handleFilterChange = (newFilters) => {
       setFilters(newFilters);
@@ -69,11 +96,14 @@ const GetCards = () => {
 
    const handleAddCart = (dishId) => (event) => {
       if(checkAuth()){
-        console.log("YESS")
         event.preventDefault();
-        dispatch(updateCartCount(cartCount+1));
+        const existingItem = cartItems.find(item => item.id === dishId);
+        if (existingItem) {
+          dispatch(updateQuantity(dishId, existingItem.quantity + 1));
+        } else {
+          dispatch(addToCart({ id: dishId, quantity: 1 }));
+        }
         setAddedToCart([...addedToCart, dishId]);
-        // localStorage.setItem("cartItem", cartItemCount.toString());
         addBasket(dishId);
       } else {
         event.preventDefault();
@@ -85,13 +115,29 @@ const GetCards = () => {
 
     };
 
+    const handleRemoveFromCart = (dishId) => (event) => {
+      event.preventDefault();
+      // const existingItem = cartItems.find(item => item.id === dishId);
+      const existingItem = basketItems && basketItems.find(item => item.id === dishId);
+      console.log("Check :", existingItem);
+      if (existingItem) {
+         if (existingItem.amount > 1) {
+          delBasket(dishId, true);
+         } else {
+           dispatch(removeFromCart(dishId));
+           delBasket(dishId);
+           setBasketItems(basketItems.filter(id => id !== dishId));
+         }
+      }
+     };
+
     function truncateDescription(description, maxWords) {
       const words = description.split(' ');
       if (words.length > maxWords) {
          return `${words.slice(0, maxWords).join(' ')}...`;
       }
       return description;
-     }
+    }
     
   return (
     // <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
@@ -144,11 +190,11 @@ const GetCards = () => {
               {isInCart(dish.id) ? (
                 <div className="p-4 flex justify-center">
                   <div className="flex items-center">
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l">
+                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l" onClick={handleRemoveFromCart(dish.id)}>
                     -
                   </button>
-                  <div className="px-4">1</div> {/* Display current quantity */}
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r">
+                  <div className="px-4">{getItemQuantity(dish.id)}</div> {/* Display current quantity */}
+                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r" onClick={handleAddCart(dish.id)}>
                     +
                   </button>
                   </div>

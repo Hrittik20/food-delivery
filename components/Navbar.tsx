@@ -29,10 +29,10 @@ const Navbar = () => {
     }
   }
 
-  // const showLoginButton = () => {
-  //   const pathsToHideLoginButton = ['/register', '/login', '/profile'];
-  //   return !pathsToHideLoginButton.includes(pathname);
-  // };
+  const showLoginButton = () => {
+    const pathsToHideLoginButton = ['/register', '/login'];
+    return !pathsToHideLoginButton.includes(pathname);
+  };
 
   // const showLogoutButton = () => {
   //   const pathsToShowLogoutButton = ['/profile'];
@@ -77,7 +77,7 @@ const Navbar = () => {
         ))}
       </ul>
 
-      {!checkAuth() && (
+      {!checkAuth() && showLoginButton() && (
       <div className="lg:flexCenter">
         <Link href="/login" passHref>
         <Button

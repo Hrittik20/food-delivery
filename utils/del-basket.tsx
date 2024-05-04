@@ -1,8 +1,13 @@
-async function delBasket(id){
+async function delBasket(id, increase = false){
 
     const token = localStorage.getItem('token');
 
-    const response = await fetch(`https://food-delivery.int.kreosoft.space/api/basket/dish/${id}`, {
+    let url = `https://food-delivery.int.kreosoft.space/api/basket/dish/${id}`;
+    if (increase) {
+        url += '?increase=true';
+    }
+
+    const response = await fetch(url , {
         method: 'DELETE',
         headers: {
           accept: 'application/json',

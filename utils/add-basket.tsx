@@ -16,6 +16,7 @@ async function addBasket(id){
     }
 
     console.log("Succesfully added");
+    console.log(response);
 
 }
 

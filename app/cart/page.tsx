@@ -1,6 +1,7 @@
 'use client'
 
-import { updateCartCount } from '@/actions/actions';
+import { addToCart, removeFromCart, updateCartCount, updateQuantity } from '@/actions/actions';
+import addBasket from '@/utils/add-basket';
 import delBasket from '@/utils/del-basket';
 import getBasket from '@/utils/get-basket';
 import { Divider } from '@nextui-org/react';
@@ -8,8 +9,9 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
 const page = () => {
-    const [allBasket, setAllBasket] = useState<[]>([]);
+    const [allBasket, setAllBasket] = useState([]);
     const cartCount = useSelector(state => state.cart.cartCount);
+    const cartItems = useSelector(state => state.cart.cartItems);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -23,14 +25,62 @@ const page = () => {
         };
 
         fetchBasket(); // Call the async function
-    }, []);
+    }, [allBasket]);
+
+    const checkAuth = () => {
+        const token = localStorage.getItem('token');
+        if(token){
+          return true;
+        } else {
+          return false;
+        }
+    }
 
     const handleDelete = (index, dishId) => {
-        dispatch(updateCartCount(cartCount-1));
+        const existingItem = cartItems.find(item => item.id === dishId);
+        if (existingItem && existingItem.quantity > 1) {
+            dispatch(updateQuantity(dishId, existingItem.quantity - 1));
+        } else if (existingItem) {
+            dispatch(removeFromCart(dishId));
+        }
+        // dispatch(updateCartCount(cartCount-1));
         delBasket(dishId);
         const newBasket = allBasket.filter((item, itemIndex) => itemIndex !== index);
         setAllBasket(newBasket);
     };
+
+    const handleAddCart = (dishId) => (event) => {
+        if(checkAuth()){
+          event.preventDefault();
+          const existingItem = allBasket && allBasket.find(item => item.id === dishId);
+          if (existingItem) {
+            dispatch(updateQuantity(dishId, existingItem.quantity + 1));
+          } else {
+            dispatch(addToCart({ id: dishId, quantity: 1 }));
+          }
+          addBasket(dishId);
+        } else {
+          event.preventDefault();
+          alert("You need to be logged in to add items to the cart.");
+        }
+  
+      };
+  
+      const handleRemoveFromCart = (dishId) => (event) => {
+        event.preventDefault();
+        // const existingItem = cartItems.find(item => item.id === dishId);
+        const existingItem = allBasket && allBasket.find(item => item.id === dishId);
+        console.log("Check :", existingItem);
+        if (existingItem) {
+           if (existingItem.amount > 1) {
+            delBasket(dishId, true);
+           } else {
+             dispatch(removeFromCart(dishId));
+             delBasket(dishId);
+             setAllBasket(allBasket.filter(id => id !== dishId));
+           }
+        }
+       };
 
   return (
     <div className="container mx-auto px-4">
@@ -56,12 +106,23 @@ const page = () => {
                         <div className='flex justify-between'>
                             <h2 className="text-xl font-semibold">{item.name}</h2>
                             <p className="text-gray-500">{item.description}</p>
-                            <p className="text-lg font-bold">{item.price}</p>
+                            <p className="text-lg font-bold">{item.price}  ₽</p>
                         </div>
-                        <div className='justify-end flex mt-2'>
-                            <button onClick={() => handleDelete(index, item.id)} className="text-red-500">
-                                <img src="trash.png" alt="Delete" style={{ width: '25px', height: 'auto' }}/>
-                            </button>
+                        <div className='justify-between flex mt-2 items-center space-x-4'>
+                            <div>
+                                <button onClick={() => handleDelete(index, item.id)} className="text-red-500">
+                                    <img src="trash.png" alt="Delete" style={{ width: '25px', height: 'auto' }}/>
+                                </button>
+                            </div>
+                            <div className='flex items-center'>
+                                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l" onClick={handleRemoveFromCart(item.id)}>
+                                    -
+                                </button>
+                                <div className="px-4">{item.amount}</div> {/* Display current quantity */}
+                                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r" onClick={handleAddCart(item.id)}>
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}

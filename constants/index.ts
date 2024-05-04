@@ -11,7 +11,7 @@ export const NAV_LINKS = [
     {
       title: 'Learn More',
       links: [
-        'About Hilink',
+        'About Us',
         'Press Releases',
         'Environment',
         'Jobs',
@@ -21,7 +21,7 @@ export const NAV_LINKS = [
     },
     {
       title: 'Our Community',
-      links: ['Climbing xixixi', 'Hiking hilink', 'Hilink kinthill'],
+      links: ['FoodDeli', 'Food Cart', 'Calories Check'],
     },
   ];
   
@@ -29,7 +29,7 @@ export const NAV_LINKS = [
     title: 'Contact Us',
     links: [
       { label: 'Admin Officer', value: '123-456-7890' },
-      { label: 'Email Officer', value: 'hilink@akinthil.com' },
+      { label: 'Email Officer', value: 'foodeli@yahoo.com' },
     ],
   };
   

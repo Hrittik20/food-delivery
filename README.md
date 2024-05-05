@@ -26,7 +26,7 @@ Welcome to our Food Delivery App, a digital marketplace for food items built wit
 
 1. Clone the repository:
    ```
-   git clone https://github.com/YourUsername/FoodDeliveryApp.git
+   git clone https://github.com/Hrittik20/FoodDeliveryApp.git
    cd FoodDeliveryApp
    ```
 

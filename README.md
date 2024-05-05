@@ -1,5 +1,3 @@
-Given the updated information about the technologies used in the project, let's revise the README to accurately reflect the tools and libraries involved. We'll also correct the mention of Hygraph, which was mistakenly included.
-
 # Food Delivery App with Next.js and Tailwind CSS
 
 ![Food Delivery App Screenshot](/public/foodDevPage.PNG)

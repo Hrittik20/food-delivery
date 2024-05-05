@@ -14,6 +14,7 @@ const options = {
 
 async function getDish(currentPage, filters){
     const categories = filters.category || [];
+    let sort = filters.sort || '';
 
     const params = new URLSearchParams({
     });
@@ -24,7 +25,12 @@ async function getDish(currentPage, filters){
         });
     }
 
-    const response = await fetch(`https://food-delivery.int.kreosoft.space/api/dish?page=${currentPage}&vegetarian=${filters.vegetarian}&${params.toString()}`, {
+    if (sort != '') {
+        sort = 'sorting=' + sort;
+    }
+
+    
+    const response = await fetch(`https://food-delivery.int.kreosoft.space/api/dish?page=${currentPage}&vegetarian=${filters.vegetarian}&${params.toString()}&${sort}`, {
         method: 'GET',
         headers: {
           accept: 'application/json',

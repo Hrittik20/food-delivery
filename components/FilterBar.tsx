@@ -52,12 +52,12 @@ const FilterBar = ({ onFilterChange }) => {
         <label htmlFor="sort" className="block text-sm font-medium text-gray-700 dark:text-gray-200">Sort By</label>
         <select id="sort" value={sort} onChange={handleSortChange} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md custom1">
           <option value="">Default</option>
-          <option value="nameAsc">Name A-Z</option>
-          <option value="nameDesc">Name Z-A</option>
-          <option value="priceAsc">Price Ascending</option>
-          <option value="priceDesc">Price Descending</option>
-          <option value="ratingAsc">Rating Ascending</option>
-          <option value="ratingDesc">Rating Descending</option>
+          <option value="NameAsc">Name A-Z</option>
+          <option value="NameDesc">Name Z-A</option>
+          <option value="PriceAsc">Price Ascending</option>
+          <option value="PriceDesc">Price Descending</option>
+          <option value="RatingAsc">Rating Ascending</option>
+          <option value="RatingDesc">Rating Descending</option>
         </select>
       </div>
     </div>

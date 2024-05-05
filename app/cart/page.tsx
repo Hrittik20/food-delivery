@@ -64,23 +64,23 @@ const page = () => {
           alert("You need to be logged in to add items to the cart.");
         }
   
-      };
+    };
   
-      const handleRemoveFromCart = (dishId) => (event) => {
-        event.preventDefault();
-        // const existingItem = cartItems.find(item => item.id === dishId);
-        const existingItem = allBasket && allBasket.find(item => item.id === dishId);
-        console.log("Check :", existingItem);
-        if (existingItem) {
-           if (existingItem.amount > 1) {
-            delBasket(dishId, true);
-           } else {
-             dispatch(removeFromCart(dishId));
-             delBasket(dishId);
-             setAllBasket(allBasket.filter(id => id !== dishId));
-           }
+    const handleRemoveFromCart = (dishId) => (event) => {
+    event.preventDefault();
+    // const existingItem = cartItems.find(item => item.id === dishId);
+    const existingItem = allBasket && allBasket.find(item => item.id === dishId);
+    console.log("Check :", existingItem);
+    if (existingItem) {
+        if (existingItem.amount > 1) {
+        delBasket(dishId, true);
+        } else {
+            dispatch(removeFromCart(dishId));
+            delBasket(dishId);
+            setAllBasket(allBasket.filter(id => id !== dishId));
         }
-       };
+    }
+    };
 
   return (
     <div className="container mx-auto px-4">

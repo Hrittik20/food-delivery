@@ -6,8 +6,10 @@ import { Button, Card, Skeleton } from '@nextui-org/react';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import  { updateCartCount }  from '@/actions/actions';
+import  { addToCart, removeFromCart, updateCartCount, updateQuantity }  from '@/actions/actions';
 import addBasket from '@/utils/add-basket';
+import getBasket from '@/utils/get-basket';
+import delBasket from '@/utils/del-basket';
 
 const page = () => {
 
@@ -16,6 +18,8 @@ const page = () => {
   const [item, setItem] = useState(null);
   const cartCount = useSelector(state => state.cart.cartCount);
   const dispatch = useDispatch();
+  const [allBasket, setAllBasket] = useState([]);
+  
 
   const checkAuth = () => {
     const token = localStorage.getItem('token');
@@ -29,7 +33,12 @@ const page = () => {
   const handleAddCart = (dishId) => (event) => {
     if(checkAuth()){
       event.preventDefault();
-      dispatch(updateCartCount(cartCount+1));
+      const existingItem = allBasket && allBasket.find(item => item.id === dishId);
+      if (existingItem) {
+        dispatch(updateQuantity(dishId, existingItem.quantity + 1));
+      } else {
+        dispatch(addToCart({ id: dishId, quantity: 1 }));
+      }
       addBasket(dishId);
     } else {
       event.preventDefault();
@@ -37,15 +46,44 @@ const page = () => {
     }
 
   };
+
+  const handleRemoveFromCart = (dishId) => (event) => {
+    event.preventDefault();
+    const existingItem = allBasket && allBasket.find(item => item.id === dishId);
+    console.log("Check :", existingItem);
+    if (existingItem) {
+        if (existingItem.amount > 1) {
+        delBasket(dishId, true);
+        } else {
+            dispatch(removeFromCart(dishId));
+            delBasket(dishId);
+            setAllBasket(allBasket.filter(id => id !== dishId));
+        }
+    }
+  };
   
   useEffect(() => {
     const fetchData = async () => {
       const itemDetails = await getDishId(id);
+      console.log("CHECK", itemDetails)
       setItem(itemDetails);
     };
 
     fetchData();
  }, [id]);
+
+ useEffect(() => {
+  const fetchBasket = async () => {
+      try {
+          const data = await getBasket();
+          setAllBasket(data);
+      } catch (error) {
+          console.error("Error fetching dishes:", error);
+      }
+  };
+
+  fetchBasket(); 
+}, [allBasket]);
 
 
  if(!item){
@@ -53,6 +91,9 @@ const page = () => {
     <Skeleton />
   );
  }
+
+const itemInBasket = allBasket.find(basketItem => basketItem.id === item.id);
+const displayAmount = itemInBasket? itemInBasket.amount : item.amount;
 
   return (
   <div className="min-h-screen py-6 flex flex-col justify-center items-center  dark:text-white">
@@ -89,11 +130,23 @@ const page = () => {
                 </div>
               </div>
             </div>
-            <div className="p-4 flex justify-center">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleAddCart(item.id)}>
-                Add to Cart
-              </button>
-            </div>
+            {!displayAmount || displayAmount === 0 ? (
+              <div className="p-4 flex justify-center">
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleAddCart(item.id)}>
+                  Add to Cart
+                </button>
+              </div>
+            ) : (
+              <div className='flex items-center p-4 justify-center'>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l" onClick={handleRemoveFromCart(item.id)}>
+                    -
+                </button>
+                <div className="px-4">{displayAmount}</div> {/* Display current quantity */}
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r" onClick={handleAddCart(item.id)}>
+                    +
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

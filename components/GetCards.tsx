@@ -178,7 +178,7 @@ const GetCards = () => {
                 <h2 className="mt-2 mb-2  font-bold">{dish.name}</h2>
                 <p className="text-sm">{truncateDescription(dish.description, 15)}</p>
                 <div className="mt-3 flex items-center">
-                  <span className="text-sm font-semibold">ab</span>&nbsp;<span className="font-bold text-xl">{dish.price}</span>&nbsp;<span className="text-sm font-semibold">₽</span>
+                  <span className="text-sm font-semibold"></span>&nbsp;<span className="font-bold text-xl">{dish.price}</span>&nbsp;<span className="text-sm font-semibold">₽</span>
                 </div>
               </div>
               <div className="p-4 border-t border-b text-xs text-gray-700" onClick={() => handlePress(dish.id)}>

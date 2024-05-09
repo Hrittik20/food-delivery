@@ -4,7 +4,9 @@ import { addToCart, removeFromCart, updateCartCount, updateQuantity } from '@/ac
 import addBasket from '@/utils/add-basket';
 import delBasket from '@/utils/del-basket';
 import getBasket from '@/utils/get-basket';
+import addOrder from '@/utils/post-order';
 import { Divider } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -13,6 +15,7 @@ const page = () => {
     const cartCount = useSelector(state => state.cart.cartCount);
     const cartItems = useSelector(state => state.cart.cartItems);
     const dispatch = useDispatch();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchBasket = async () => {
@@ -82,6 +85,14 @@ const page = () => {
     }
     };
 
+    const handleOrder = () => (event) => {
+        router.push('/purchase');
+    }
+
+    const calculateTotal = (basket) => {
+        return basket.reduce((total, item) => total + (item.price * item.amount), 0);
+    };
+
   return (
     <div className="container mx-auto px-4">
         <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
@@ -91,41 +102,41 @@ const page = () => {
                 <p className="text-4xl font-bold text-gray-700">Your cart is empty.</p>
             </div>
         ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {allBasket.map((item, index) => (
-                    // <div key={index} className="border p-4 rounded-lg shadow-md">
-                    //     <img src={item.image} alt={item.name} className="w-full h-48 object-cover mb-4 rounded" />
-                    //     <h2 className="text-xl font-semibold">{item.name}</h2>
-                    //     <p className="text-gray-500">{item.description}</p>
-                    //     <p className="text-lg font-bold">{item.price}</p>
-                    //     {/* <p className="text-sm font-medium">Quantity: {item.quantity}</p> */}
-                    //     <button onClick={() => handleDelete(index)} className="text-red-500">Delete</button>
-                    // </div>
-                    <div key={index} className="border p-4 rounded-lg shadow-md">
-                        <img src={item.image} alt={item.name} className="w-full h-48 object-cover mb-4 rounded" />
-                        <div className='flex justify-between'>
-                            <h2 className="text-xl font-semibold">{item.name}</h2>
-                            <p className="text-gray-500">{item.description}</p>
-                            <p className="text-lg font-bold">{item.price}  ₽</p>
-                        </div>
-                        <div className='justify-between flex mt-2 items-center space-x-4'>
-                            <div>
-                                <button onClick={() => handleDelete(index, item.id)} className="text-red-500">
-                                    <img src="trash.png" alt="Delete" style={{ width: '25px', height: 'auto' }}/>
-                                </button>
+            <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {allBasket.map((item, index) => (
+                        <div key={index} className="border p-4 rounded-lg shadow-md dark:bg-gray-800">
+                            <img src={item.image} alt={item.name} className="w-full h-48 object-cover mb-4 rounded" />
+                            <div className='flex justify-between'>
+                                <h2 className="text-l font-semibold">{item.name}</h2>
+                                <p className="text-gray-500">{item.description}</p>
+                                <p className="text-lg font-bold">{item.price}  ₽</p>
                             </div>
-                            <div className='flex items-center'>
-                                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l" onClick={handleRemoveFromCart(item.id)}>
-                                    -
-                                </button>
-                                <div className="px-4">{item.amount}</div> {/* Display current quantity */}
-                                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r" onClick={handleAddCart(item.id)}>
-                                    +
-                                </button>
+                            <div className='justify-between flex mt-2 items-center space-x-4'>
+                                <div>
+                                    <button onClick={() => handleDelete(index, item.id)} className="text-red-500">
+                                        <img src="trash.png" alt="Delete" style={{ width: '25px', height: 'auto' }}/>
+                                    </button>
+                                </div>
+                                <div className='flex items-center'>
+                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l" onClick={handleRemoveFromCart(item.id)}>
+                                        -
+                                    </button>
+                                    <div className="px-4">{item.amount}</div> {/* Display current quantity */}
+                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r" onClick={handleAddCart(item.id)}>
+                                        +
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
+                <div className="mb-4 mt-8">
+                    <h2 className="text-xl font-semibold">Total: ₽ {calculateTotal(allBasket)}</h2>
+                    <button onClick={handleOrder()} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4">
+                        Order
+                    </button>
+                </div>
             </div>
         )}
     </div>

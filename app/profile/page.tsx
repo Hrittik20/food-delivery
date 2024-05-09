@@ -28,6 +28,8 @@ const ProfilePage = () => {
             }
             const data = await response.json();
             localStorage.setItem("username", data.fullName);
+            localStorage.setItem("address", data.address);
+            localStorage.setItem("number", data.phoneNumber);
             const formattedUser = {
                 ...data,
                 birthDate: data.birthDate ? new Date(data.birthDate).toISOString().split('T')[0] : '',

@@ -42,6 +42,7 @@ const FilterBar = ({ onFilterChange }) => {
             onChange={handleCategoryChange}
             labelledBy="Select Category"
             selectionType="tags"
+            className='dark:text-black'
           />
       </div>
       <div className="w-full md:w-auto mb-4 md:mb-0">

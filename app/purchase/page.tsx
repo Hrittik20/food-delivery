@@ -42,10 +42,10 @@ const page = () => {
     const handleOrder = () => (event) => {
         event.preventDefault();
         if (!validateDeliveryTime(deliveryDateTime)) {
+            console.log(deliveryDateTime)
             alert("Delivery time must be at least 60 minutes after the current time.");
             return;
         }
-        // const address = localStorage.getItem("address")
         addOrder(deliveryAddress, deliveryDateTime)
         .then(() => {
                 router.push("/orders");
@@ -70,6 +70,12 @@ const page = () => {
         const selectedTimeObj = new Date(selectedTime);
         const currentTimeMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
         const selectedTimeMinutes = selectedTimeObj.getHours() * 60 + selectedTimeObj.getMinutes();
+        const currentTimeDate = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
+        const selectedTimeDate = new Date(selectedTimeObj.getFullYear(), selectedTimeObj.getMonth(), selectedTimeObj.getDate());
+
+        if (currentTimeDate.getTime()!== selectedTimeDate.getTime()) {
+            return true;
+        }
 
         // Check if the selected time is at least serverMinDeliveryTime minutes after the current time
         return selectedTimeMinutes >= currentTimeMinutes + 60;

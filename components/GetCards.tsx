@@ -37,6 +37,44 @@ const GetCards = () => {
                 const data = await getDish(currentPage, filters);
                 setAllDish(data.dishes);
                 setTotalPage(data.pagination.size-1);
+
+                // URL
+                let url = '?';
+                const categories = filters.category || [];
+                let sort = filters.sort || '';
+                let vegetarian = filters.vegetarian? 'true' : 'false';
+
+                categories.forEach(category => {
+                    if (url.endsWith('?')) {
+                        url += `categories=${category.value}`;
+                    } else {
+                        url += `&categories=${category.value}`;
+                    }
+                });
+
+                if (sort) {
+                    if (url.endsWith('?')) {
+                        url += `sorting=${sort}`;
+                    } else {
+                        url += `&sorting=${sort}`;
+                    }
+                }
+
+                if (vegetarian!== 'false') {
+                    if (url.endsWith('?')) {
+                        url += `vegetarian=${vegetarian}`;
+                    } else {
+                        url += `&vegetarian=${vegetarian}`;
+                    }
+                }
+
+                if (url.endsWith('?')) {
+                  url += `page=${currentPage}`; 
+                } else {
+                  url += `&page=${currentPage}`;
+                }
+                window.history.pushState({}, '', url);
+                
             } catch (error) {
                 console.error("Error fetching dishes:", error);
             }

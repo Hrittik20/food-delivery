@@ -10,10 +10,13 @@ import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from 'react-redux';
 import { Avatar, User } from "@nextui-org/react"
+import getBasket from "@/utils/get-basket"
 
 const Navbar = () => {
 
-  const cartItemCount = useSelector(state => state.cart.cartCount);
+  const [allBasket, setAllBasket] = useState([]);
+  const [cartItemCount, setCartItemCount] = useState(0);
+  // const cartItemCount = useSelector(state => state.cart.cartCount);
   const [email, setEmail] = useState(String);
   const pathname = usePathname();
   const [shouldShake, setShouldShake] = useState(false);
@@ -28,6 +31,20 @@ const Navbar = () => {
       return false;
     }
   }
+
+  useEffect(() => {
+    const fetchBasket = async () => {
+        try {
+            const data = await getBasket();
+            setAllBasket(data);
+            setCartItemCount(data.length);
+        } catch (error) {
+            console.error("Error fetching dishes:", error);
+        }
+    };
+
+    fetchBasket(); // Call the async function
+  }, [allBasket]);
 
   const showLoginButton = () => {
     const pathsToHideLoginButton = ['/register', '/login'];

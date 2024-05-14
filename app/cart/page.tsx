@@ -43,6 +43,7 @@ const page = () => {
         const existingItem = cartItems.find(item => item.id === dishId);
         if (existingItem && existingItem.quantity > 1) {
             dispatch(updateQuantity(dishId, existingItem.quantity - 1));
+            dispatch(updateCartCount(dishId, existingItem.quantity - 1));
         } else if (existingItem) {
             dispatch(removeFromCart(dishId));
         }
@@ -58,6 +59,7 @@ const page = () => {
           const existingItem = allBasket && allBasket.find(item => item.id === dishId);
           if (existingItem) {
             dispatch(updateQuantity(dishId, existingItem.quantity + 1));
+            dispatch(updateCartCount(dishId, existingItem.quantity + 1));
           } else {
             dispatch(addToCart({ id: dishId, quantity: 1 }));
           }

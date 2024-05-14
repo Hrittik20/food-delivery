@@ -10,6 +10,10 @@ import  { addToCart, removeFromCart, updateCartCount, updateQuantity }  from '@/
 import addBasket from '@/utils/add-basket';
 import getBasket from '@/utils/get-basket';
 import delBasket from '@/utils/del-basket';
+import getOrders from '@/utils/get-orders';
+import getOrderId from '@/utils/get-order-id';
+import RateUs from '@/components/RateUs';
+import getRating from '@/utils/get-rating';
 
 const page = () => {
 
@@ -19,6 +23,7 @@ const page = () => {
   const cartCount = useSelector(state => state.cart.cartCount);
   const dispatch = useDispatch();
   const [allBasket, setAllBasket] = useState([]);
+  const [orderedBefore, setOrderedBefore] = useState(false);
   
 
   const checkAuth = () => {
@@ -61,11 +66,15 @@ const page = () => {
         }
     }
   };
+
   
   useEffect(() => {
     const fetchData = async () => {
       const itemDetails = await getDishId(id);
-      console.log("CHECK", itemDetails)
+      const giveRating = await getRating(id);
+      if(giveRating){
+        setOrderedBefore(true);
+      }
       setItem(itemDetails);
     };
 
@@ -92,8 +101,10 @@ const page = () => {
   );
  }
 
-const itemInBasket = allBasket.find(basketItem => basketItem.id === item.id);
-const displayAmount = itemInBasket? itemInBasket.amount : item.amount;
+if(checkAuth()){
+  const itemInBasket = allBasket.find(basketItem => basketItem.id === item.id);
+  const displayAmount = itemInBasket? itemInBasket.amount : item.amount;
+}
 
   return (
   <div className="min-h-screen py-6 flex flex-col justify-center items-center  dark:text-white">
@@ -120,14 +131,26 @@ const displayAmount = itemInBasket? itemInBasket.amount : item.amount;
                     {item.vegetarian ? 'Veg' : 'Non-Veg'}
                   </span>
                 </div>
-                <div className="flex justify-between items-center ">
-                  <p className="text-lg font-medium ">Rating:</p>
-                  <div className="p-4 border-t border-b text-xs text-gray-700">
-                    <div className="p-4 flex items-start text-sm text-gray-600">
-                      <StarRating rating={item.rating} />
-                    </div>       
-                  </div>
-                </div>
+                {orderedBefore? (
+                    <div className="flex justify-between items-center ">
+                      <p className="text-lg font-medium ">Give Rating:</p>
+                      <div className="p-4 border-t border-b text-xs text-gray-700">
+                        <div className="p-4 flex items-start text-sm text-gray-600">
+                          {/* <StarRating rating={item.rating}/> */}
+                          <RateUs id={id} totalStars={10}/>
+                        </div>       
+                      </div>
+                    </div>
+                ): (
+                  <div className="flex justify-between items-center ">
+                    <p className="text-lg font-medium ">Rating:</p>
+                    <div className="p-4 border-t border-b text-xs text-gray-700">
+                      <div className="p-4 flex items-start text-sm text-gray-600">
+                        <StarRating rating={item.rating} />
+                      </div>       
+                    </div>
+                  </div>  
+                )}  
               </div>
             </div>
             {!displayAmount || displayAmount === 0 ? (

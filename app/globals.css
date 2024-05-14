@@ -50,6 +50,23 @@ body {
   width: 256px;
   height: 256px;
 }
+
+.star-rating {
+  display: flex;
+  align-items: center;
+}
+
+.star {
+  font-size: 24px;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.filled {
+  color: #ffc107; /* Change to your preferred color */
+}
+
+
  
  @keyframes loading {
    0% {
